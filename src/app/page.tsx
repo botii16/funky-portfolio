@@ -1,101 +1,168 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
+
+const FunkyPortfolio = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200 overflow-hidden">
+      <Header />
+      <AnimatedBackground mousePosition={mousePosition} />
+      <main className="container mx-auto px-4 py-8">
+        <Hero />
+        <Projects />
+        <Contact />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
-}
+};
+
+export default FunkyPortfolio;
+
+const Header = () => (
+  <header className="p-4 flex justify-between items-center">
+    <motion.h1
+      className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-500"
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      Funky Dev
+    </motion.h1>
+    <nav>
+      <ul className="flex space-x-4">
+        {["Projects", "About", "Contact"].map((item) => (
+          <motion.li
+            key={item}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <a
+              href={`#${item.toLowerCase()}`}
+              className="text-gray-800 hover:text-pink-500 transition-colors"
+            >
+              {item}
+            </a>
+          </motion.li>
+        ))}
+      </ul>
+    </nav>
+  </header>
+);
+
+const AnimatedBackground = ({
+  mousePosition,
+}: {
+  mousePosition: { x: number; y: number };
+}) => (
+  <div className="fixed inset-0 pointer-events-none">
+    <svg width="100%" height="100%">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <motion.circle
+        cx={mousePosition.x}
+        cy={mousePosition.y}
+        r="100"
+        fill="none"
+        stroke="url(#gradient)"
+        strokeWidth="2"
+        filter="url(#glow)"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.3 }}
+      />
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#ff00ff" />
+        <stop offset="100%" stopColor="#00ffff" />
+      </linearGradient>
+    </svg>
+  </div>
+);
+
+const Hero = () => (
+  <motion.section
+    className="text-center py-20"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1 }}
+  >
+    <h2 className="text-6xl font-bold mb-4 relative inline-block">
+      Welcome to the Funk Zone
+      <Sparkles className="absolute -top-4 -right-4 text-yellow-400" />
+    </h2>
+    <p className="text-xl text-gray-700 mb-8">
+      Where code meets creativity in a neon-lit digital playground
+    </p>
+    <motion.button
+      className="bg-gradient-to-r from-pink-500 to-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:from-pink-600 hover:to-blue-600 transition-all duration-300"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      Explore the Funk
+    </motion.button>
+  </motion.section>
+);
+
+const Projects = () => (
+  <section id="projects" className="py-20">
+    <h3 className="text-4xl font-bold mb-10 text-center">Funky Projects</h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[1, 2, 3].map((i) => (
+        <motion.div
+          key={i}
+          className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-lg p-6 shadow-lg"
+          whileHover={{ scale: 1.05, rotate: 2 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: i * 0.1 }}
+        >
+          <h4 className="text-2xl font-semibold mb-2">Project {i}</h4>
+          <p className="text-gray-700">
+            A funky description for this amazing project goes here.
+          </p>
+        </motion.div>
+      ))}
+    </div>
+  </section>
+);
+
+const Contact = () => (
+  <motion.section
+    id="contact"
+    className="py-20 text-center"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1, delay: 0.5 }}
+  >
+    <h3 className="text-4xl font-bold mb-10">Get in Touch</h3>
+    <p className="text-xl mb-8">
+      Ready to add some funk to your project? Let's collaborate!
+    </p>
+    <motion.a
+      href="mailto:ujviboti@gmail.com"
+      className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
+      whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255, 0, 255, 0.5)" }}
+      whileTap={{ scale: 0.95 }}
+    >
+      Send a Message
+    </motion.a>
+  </motion.section>
+);
